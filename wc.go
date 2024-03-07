@@ -12,7 +12,7 @@ import(
 )
 
 // function to get the content of the file, or through relevant error
-func getFileContent(fileName string) (string, error) {
+func getFileContent(fileName string) ([]uint8, error) {
 	/*
 	content, err := os.ReadFile(fileName)
 	if err != nil {
@@ -21,7 +21,7 @@ func getFileContent(fileName string) (string, error) {
 	}
 	return string(content), nil
 	*/
-	var content string
+	var content []uint8
 	// first of all check if the a file/directory with the given fileName exists
 	file, err := os.Open(fileName)
 	defer file.Close() 
@@ -51,11 +51,10 @@ func getFileContent(fileName string) (string, error) {
 	}
 
 	// read the contents of the file
-	data, err := io.ReadAll(file)
+	content, err = io.ReadAll(file)
 	if err!=nil {
 		return content, errors.New(fmt.Sprintf("./wc: %s: %v\n", fileName, err.Error()))
 	}
-	content = string(data)
 	//fmt.Println(content)
 
 	return content, nil
@@ -105,6 +104,17 @@ func getWordsInFile(fileName string) (*[]string, error) {
 	return &words, nil	
 }
 
+// function to calculate total number of bytes in a file
+func getBytesInFile(fileName string) (int, error) {
+
+	var totalWords = 0
+	fileContent, err := getFileContent(fileName)
+	if err!=nil {
+		return totalWords, err
+	}
+	totalWords = len(fileContent)
+	return totalWords, nil
+}
 
 func main(){
 	/*
@@ -137,5 +147,13 @@ func main(){
 			os.Exit(0)
 		}
 		fmt.Printf("\t%d %v\n", len(*words), *fileToReadForWords)
+	} 
+	if *fileToReadForBytes != "" {
+		totalBytes, err := getBytesInFile(*fileToReadForBytes)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+		fmt.Printf("\t%d %v\n", totalBytes, *fileToReadForBytes)
 	} 
 }
