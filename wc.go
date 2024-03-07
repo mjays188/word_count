@@ -106,7 +106,6 @@ func getWordsInFile(fileName string) (*[]string, error) {
 
 // function to calculate total number of bytes in a file
 func getBytesInFile(fileName string) (int, error) {
-
 	var totalWords = 0
 	fileContent, err := getFileContent(fileName)
 	if err!=nil {
@@ -114,6 +113,17 @@ func getBytesInFile(fileName string) (int, error) {
 	}
 	totalWords = len(fileContent)
 	return totalWords, nil
+}
+
+// function to count total number of characters in a file
+func getTotalCharacters(fileName string) (int, error) {
+	var totalCharacters = 0
+	fileContent, err := getFileContent(fileName)
+	if err != nil {
+		return totalCharacters, err
+	}
+	totalCharacters = len(string(fileContent))
+	return totalCharacters, nil
 }
 
 func main(){
@@ -128,7 +138,7 @@ func main(){
 	var fileToReadForLines = flag.String("l", "", "No of lines in the file, (if present)")
 	var fileToReadForWords = flag.String("w", "", "No of words in the file, (if present)")
 	var fileToReadForBytes = flag.String("c", "", "No of bytes in the file, (if present)")
-//	var fileToReadForCharaters = flag.String("m", "", "No of characters in the file, (if present)")
+	var fileToReadForCharacters = flag.String("m", "", "No of characters in the file, (if present)")
 
 	flag.Parse()
 
@@ -155,5 +165,14 @@ func main(){
 			os.Exit(0)
 		}
 		fmt.Printf("\t%d %v\n", totalBytes, *fileToReadForBytes)
+	} 
+
+	if *fileToReadForCharacters != "" {
+		totalChars, err := getTotalCharacters(*fileToReadForCharacters)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+		fmt.Printf("\t%d %v\n", totalChars, *fileToReadForCharacters)
 	} 
 }
